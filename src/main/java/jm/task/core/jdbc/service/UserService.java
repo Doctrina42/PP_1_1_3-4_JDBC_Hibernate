@@ -3,18 +3,19 @@ package jm.task.core.jdbc.service;
 import jm.task.core.jdbc.model.User;
 
 import javax.transaction.SystemException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserService {
-    void createUsersTable() throws SystemException;
+    void createUsersTable() throws SystemException, SQLException;
 
-    void dropUsersTable();
+    void dropUsersTable() throws SQLException;
 
-    void saveUser(String name, String lastName, byte age);
+    void saveUser(String name, String lastName, byte age) throws SQLException;
 
-    void removeUserById(long id);
+    void removeUserById(long id) throws SQLException;
 
-    List<User> getAllUsers();
+    List<User> getAllUsers() throws SQLException;
 
-    void cleanUsersTable();
+    void cleanUsersTable() throws SQLException;
 }
