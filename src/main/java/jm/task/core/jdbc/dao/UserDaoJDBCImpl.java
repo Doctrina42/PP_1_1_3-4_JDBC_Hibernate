@@ -3,7 +3,6 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import javax.transaction.Transaction;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +14,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    public void createUsersTable() throws SQLException {
+    public void createUsersTable() {
         try (Statement statement = connection.createStatement();) {
-            connection.setAutoCommit(false);
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS user" +
                     "(" +
                     "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
@@ -25,57 +23,44 @@ public class UserDaoJDBCImpl implements UserDao {
                     "lastname VARCHAR(45) ," +
                     "age TINYINT(10) " +
                     ")");
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("При тестировании создания таблицы пользователей произошло исключение\n" + e.getMessage());
-            connection.rollback();
-        }
+                    }
 
     }
 
-    public void dropUsersTable() throws SQLException {
+    public void dropUsersTable() {
         try (Statement statement = connection.createStatement()) {
-            connection.setAutoCommit(false);
             statement.executeUpdate("DROP TABLE IF EXISTS user");
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("При тестировании удаления таблицы произошло исключение\n" + e.getMessage());
-            connection.rollback();
         }
 
     }
 
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
-
+    public void saveUser(String name, String lastName, byte age) {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO user VALUES (id,?,?,?)")) {
-            connection.setAutoCommit(false);
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
             statement.executeUpdate();
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("Во время тестирования сохранения пользователя произошло исключение\n" + e.getMessage());
-            connection.rollback();
         }
     }
 
-    public void removeUserById(long id) throws SQLException {
+    public void removeUserById(long id)  {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM user WHERE ID = ?")) {
-            connection.setAutoCommit(false);
             statement.setLong(1, id);
             statement.executeUpdate();
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("При тестировании удаления пользователя по id произошло исключение\n" + e.getMessage());
-            connection.rollback();
         }
     }
 
-    public List<User> getAllUsers() throws SQLException {
+    public List<User> getAllUsers()  {
         List<User> list = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            connection.setAutoCommit(false);
             ResultSet resultSet = statement.executeQuery("SELECT * FROM user");
             while (resultSet.next()) {
                 User user = new User();
@@ -84,23 +69,19 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setLastName(resultSet.getString("lastName"));
                 user.setAge(resultSet.getByte("age"));
                 list.add(user);
+                System.out.println(user);
             }
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("При попытке достать всех пользователей из базы данных произошло исключение\n" + e.getMessage());
-            connection.rollback();
         }
         return list;
     }
 
-    public void cleanUsersTable() throws SQLException {
+    public void cleanUsersTable() {
         try (Statement statement = connection.createStatement()) {
-            connection.setAutoCommit(false);
             statement.executeUpdate("TRUNCATE TABLE user");
-            connection.commit();
         } catch (SQLException e) {
             System.out.println("При тестировании очистки таблицы пользователей произошло исключение\n" + e.getMessage());
-            connection.rollback();
         }
 
     }
