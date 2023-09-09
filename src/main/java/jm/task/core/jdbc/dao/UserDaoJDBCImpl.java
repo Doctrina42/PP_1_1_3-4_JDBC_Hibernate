@@ -25,8 +25,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     ")");
         } catch (SQLException e) {
             System.out.println("При тестировании создания таблицы пользователей произошло исключение\n" + e.getMessage());
-                    }
-
+        }
     }
 
     public void dropUsersTable() {
@@ -38,36 +37,28 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO user VALUES (id,?,?,?)")) {
+            connection.setAutoCommit(false);
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
             statement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
+            connection.rollback();
             System.out.println("Во время тестирования сохранения пользователя произошло исключение\n" + e.getMessage());
         }
     }
 
-    //    public void saveUser(String name, String lastName, byte age) throws SQLException {
-    //    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO user VALUES (id,?,?,?)")) {
-    //       connection.setAutoCommit(false);
-    //        statement.setString(1, name);
-    //        statement.setString(2, lastName);
-    //        statement.setInt(3, age);
-    //        statement.executeUpdate();
-    //        connection.commit();
-    //    } catch (SQLException e) {
-    //        connection.rollback();
-    //        System.out.println("Во время тестирования сохранения пользователя произошло исключение\n" + e.getMessage());
-    //    }
-    //}
-
-    public void removeUserById(long id)  {
+    public void removeUserById(long id) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM user WHERE ID = ?")) {
+            connection.setAutoCommit(false);
             statement.setLong(1, id);
             statement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
+            connection.rollback();
             System.out.println("При тестировании удаления пользователя по id произошло исключение\n" + e.getMessage());
         }
     }

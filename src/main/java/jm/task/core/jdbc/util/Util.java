@@ -1,6 +1,6 @@
 package jm.task.core.jdbc.util;
 
-import org.hibernate.SessionFactory;
+
 
 import java.sql.Connection;
 import java.sql.DriverManager;
