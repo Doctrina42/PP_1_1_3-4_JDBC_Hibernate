@@ -37,7 +37,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
+    public void saveUser(String name, String lastName, byte age) {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO user VALUES (id,?,?,?)")) {
             connection.setAutoCommit(false);
             statement.setString(1, name);
@@ -46,19 +46,27 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            connection.rollback();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             System.out.println("Во время тестирования сохранения пользователя произошло исключение\n" + e.getMessage());
         }
     }
 
-    public void removeUserById(long id) throws SQLException {
+    public void removeUserById(long id)  {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM user WHERE ID = ?")) {
             connection.setAutoCommit(false);
             statement.setLong(1, id);
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
-            connection.rollback();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             System.out.println("При тестировании удаления пользователя по id произошло исключение\n" + e.getMessage());
         }
     }
